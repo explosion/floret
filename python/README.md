@@ -64,7 +64,7 @@ fastText vectors.
 Import floret vectors into spaCy v3.2+:
 
 ```bash
-spacy init vectors --floret-vectors vectors.floret spacy_vectors_model
+spacy init vectors --mode floret vectors.floret spacy_vectors_model
 ```
 
 ## Notes

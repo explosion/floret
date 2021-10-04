@@ -77,7 +77,7 @@ training settings needed to load this table in spaCy.
 To import this vector table in [spaCy](https://spacy.io) v3.2+:
 
 ```bash
-spacy init vectors --floret-vectors vectors.floret spacy_vectors_dir
+spacy init vectors --mode floret vectors.floret spacy_vectors_dir
 ```
 
 ## How floret works
@@ -161,7 +161,7 @@ This table can be imported into a spaCy pipeline using `spacy init vectors` in
 spaCy v3.2+ with the option `--floret-vectors`:
 
 ```bash
-spacy init vectors --floret-vectors vectors.floret spacy_vectors_dir
+spacy init vectors --mode floret vectors.floret spacy_vectors_dir
 ```
 
 ## Notes
