@@ -109,7 +109,7 @@ void Dictionary::getSubwords(
   int32_t i = getId(word);
   ngrams.clear();
   substrings.clear();
-  if (!args_->hashOnly && i >= 0) {
+  if (args_->mode != mode_name::floret && i >= 0) {
     ngrams.push_back(i);
     substrings.push_back(words_[i].word);
   }
@@ -183,7 +183,7 @@ void Dictionary::computeSubwords(
     const std::string& word,
     std::vector<int32_t>& ngrams,
     std::vector<std::string>* substrings) const {
-  if (args_->hashOnly) {
+  if ((args_->mode == mode_name::floret)) {
     std::vector<uint32_t> hashes;
     murmurhash(word, &hashes);
     for (uint32_t hash : hashes) {
@@ -205,7 +205,7 @@ void Dictionary::computeSubwords(
         ngram.push_back(word[j++]);
       }
       if (n >= args_->minn && !(n == 1 && (i == 0 || j == word.size()))) {
-        if (args_->hashOnly) {
+        if ((args_->mode == mode_name::floret)) {
           std::vector<uint32_t> hashes;
           murmurhash(ngram, &hashes);
           for (size_t i = 0; i < hashes.size(); i++) {
@@ -233,7 +233,7 @@ void Dictionary::initNgrams() {
       computeSubwords(word, words_[i].subwords);
     }
     // remove word-index subword for all words except 0 (</s>)
-    if (args_->hashOnly && i > 0) {
+    if ((args_->mode == mode_name::floret) && i > 0) {
       words_[i].subwords.erase(words_[i].subwords.begin());
     }
   }

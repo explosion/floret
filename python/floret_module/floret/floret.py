@@ -17,6 +17,7 @@ from itertools import chain
 
 loss_name = floret.loss_name
 model_name = floret.model_name
+mode_name = floret.mode_name
 EOS = "</s>"
 BOW = "<"
 EOW = ">"
@@ -102,7 +103,7 @@ class _floret(object):
                          'minCountLabel', 'minn', 'maxn', 'neg', 'wordNgrams',
                          'loss', 'bucket', 'thread', 'lrUpdateRate', 't',
                          'label', 'verbose', 'pretrainedVectors',
-                         'hashOnly', 'hashCount']
+                         'mode', 'hashCount']
             for arg_name in arg_names:
                 setattr(self, arg_name, getattr(args, arg_name))
 
@@ -416,9 +417,19 @@ def _parse_loss_string(string):
         raise ValueError("Unrecognized loss name")
 
 
+def _parse_mode_string(string):
+    if string == "fasttext":
+        return mode_name.fasttext
+    elif string == "floret":
+        return mode_name.floret
+    else:
+        raise ValueError("Unrecognized mode name")
+
+
 def _build_args(args, manually_set_args):
     args["model"] = _parse_model_string(args["model"])
     args["loss"] = _parse_loss_string(args["loss"])
+    args["mode"] = _parse_mode_string(args["mode"])
     if type(args["autotuneModelSize"]) == int:
         args["autotuneModelSize"] = str(args["autotuneModelSize"])
 
@@ -429,8 +440,10 @@ def _build_args(args, manually_set_args):
             a.setManual(k)
     a.output = ""  # User should use save_model
     a.saveOutput = 0  # Never use this
-    if a.wordNgrams <= 1 and a.maxn == 0:
+    if a.wordNgrams <= 1 and a.maxn == 0 and len(a.autotuneValidationFile) == 0 and a.mode != mode_name.floret:
         a.bucket = 0
+    if a.mode != "floret":
+        a.hashCount = 1
     return a
 
 
@@ -455,7 +468,7 @@ unsupervised_default = {
     'minCountLabel': 0,
     'minn': 3,
     'maxn': 6,
-    'hashOnly': False,
+    'mode': "fasttext_mode",
     'hashCount': 1,
     'neg': 5,
     'wordNgrams': 1,
@@ -557,7 +570,7 @@ def train_unsupervised(*kargs, **kwargs):
     """
     arg_names = ['input', 'model', 'lr', 'dim', 'ws', 'epoch', 'minCount',
                  'minCountLabel', 'minn', 'maxn', 'neg', 'wordNgrams', 'loss',
-                 'bucket', 'hashCount', 'hashOnly', 'thread', 'lrUpdateRate',
+                 'bucket', 'hashCount', 'mode', 'thread', 'lrUpdateRate',
                  't', 'label', 'verbose', 'pretrainedVectors']
     args, manually_set_args = read_args(kargs, kwargs, arg_names,
                                         unsupervised_default)

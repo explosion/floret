@@ -96,7 +96,7 @@ int32_t FastText::getWordId(const std::string& word) const {
 }
 
 int32_t FastText::getSubwordId(const std::string& subword) const {
-  if (args_->hashOnly) {
+  if (args_->mode == mode_name::floret) {
     return -1;
   } else {
     int32_t h = dict_->hash(subword) % args_->bucket;
@@ -125,7 +125,7 @@ void FastText::getWordVector(Vector& vec, const std::string& word) const {
 
 void FastText::getSubwordVector(Vector& vec, const std::string& subword) const {
   vec.zero();
-  if (args_->hashOnly) {
+  if (args_->mode == mode_name::floret) {
     std::vector<uint32_t> hashes;
     dict_->murmurhash(subword, &hashes);
     for (size_t i = 0; i < hashes.size(); i++) {

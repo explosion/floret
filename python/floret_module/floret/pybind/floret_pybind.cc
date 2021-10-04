@@ -104,7 +104,7 @@ PYBIND11_MODULE(floret_pybind, m) {
       .def_readwrite("bucket", &fasttext::Args::bucket)
       .def_readwrite("minn", &fasttext::Args::minn)
       .def_readwrite("maxn", &fasttext::Args::maxn)
-      .def_readwrite("hashOnly", &fasttext::Args::hashOnly)
+      .def_readwrite("mode", &fasttext::Args::mode)
       .def_readwrite("hashCount", &fasttext::Args::hashCount)
       .def_readwrite("thread", &fasttext::Args::thread)
       .def_readwrite("t", &fasttext::Args::t)
@@ -156,6 +156,11 @@ PYBIND11_MODULE(floret_pybind, m) {
           "recallAtPrecisionLabel",
           fasttext::metric_name::recallAtPrecisionLabel)
       .export_values();
+
+  py::enum_<fasttext::mode_name>(m, "mode_name")
+      .value("fasttext", fasttext::mode_name::fasttext)
+      .value("floret", fasttext::mode_name::floret);
+      // not exported into the parent scope because the names clash
 
   m.def(
       "train",

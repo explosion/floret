@@ -45,12 +45,12 @@ See the [python docs](python/README.md).
 `floret` adds two additional command line options to `fasttext`:
 
 ```
-  -hashOnly           both word and char ngrams hashed only in buckets [false]
-  -hashCount          with hashOnly: number of hashes (1-4) per word / subword [1]
+  -mode               fasttext (default) or floret (word and char ngrams hashed in buckets) [fasttext]
+  -hashCount          floret mode only: number of hashes (1-4) per word/subword [1]
 ```
 
-With `-hashOnly`, the word entries are stored in the same table as the subword
-embeddings (buckets), reducing the size of the saved vector data.
+With `-mode floret`, the word entries are stored in the same table as the
+subword embeddings (buckets), reducing the size of the saved vector data.
 
 With `-hashCount 2`, each entry is stored as the sum of 2 rows in the internal
 subwords hash table. `floret` supports 1-4 hashes per entry in the embeddings
@@ -64,14 +64,14 @@ hashes per entry, and a compact table of 50K entries rather than the default of
 2M entries.
 
 ```bash
-floret cbow -dim 300 -minn 4 -maxn 5 -hashOnly -hashCount 2 -bucket 50000 \
+floret cbow -dim 300 -minn 4 -maxn 5 -mode floret -hashCount 2 -bucket 50000 \
 -input input.txt -output vectors
 ```
 
-With the `-hashOnly` option, floret will save an additional vector table with
-the file ending `.floret`. The format is very similar to `.vec` with a header
-line followed by one line per vector. The word tokens are replaced with the
-index of the row and the header is extended to contain all the relevant
+With the `-mode floret` option, floret will save an additional vector table
+with the file ending `.floret`. The format is very similar to `.vec` with a
+header line followed by one line per vector. The word tokens are replaced with
+the index of the row and the header is extended to contain all the relevant
 training settings needed to load this table in spaCy.
 
 To import this vector table in [spaCy](https://spacy.io) v3.2+:
@@ -107,9 +107,9 @@ the table. By representing each entry as the sum of multiple rows, where it's
 unlikely that two entries will collide on multiple hashes, most entries will
 end up with a distinct representation.
 
-With the settings `-minn 4 -maxn 5 -hashOnly -hashCount 2`, the embedding for
-the word `apple` is stored internally as the sum of 2 hashed rows for each of
-the word, 4-grams and 5-ngrams. The word is padded with the BOW and EOW
+With the settings `-minn 4 -maxn 5 -mode floret -hashCount 2`, the embedding
+for the word `apple` is stored internally as the sum of 2 hashed rows for each
+of the word, 4-grams and 5-ngrams. The word is padded with the BOW and EOW
 characters `<` and `>`, creating the following word and subword entries:
 
 ```
@@ -128,7 +128,7 @@ For compatibility with spaCy,
 char ngram strings. The final embedding for `apple` is then the sum of two rows
 (`-hashCount 2`) per word and char ngram above.
 
-With `-hashOnly`, `floret` will save an additional vector table with the
+With `-mode floret`, `floret` will save an additional vector table with the
 ending `.floret` alongside the usual `.bin` and `.vec` files. The format is
 very similar to `.vec` with a header line followed by one line per entry in the
 vector table with the row index rather than a word token at the beginning of

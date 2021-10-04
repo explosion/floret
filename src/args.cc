@@ -31,7 +31,7 @@ Args::Args() {
   bucket = 2000000;
   minn = 3;
   maxn = 6;
-  hashOnly = false;
+  mode = mode_name::fasttext;
   hashCount = 1;
   thread = 12;
   lrUpdateRate = 100;
@@ -107,6 +107,16 @@ std::string Args::metricToString(metric_name mn) const {
   return "Unknown metric name!"; // should never happen
 }
 
+std::string Args::modeToString(mode_name mn) const {
+  switch (mn) {
+    case mode_name::fasttext:
+      return "fasttext";
+    case mode_name::floret:
+      return "floret";
+  }
+  return "Unknown mode name!"; // should never happen
+}
+
 void Args::parseArgs(const std::vector<std::string>& args) {
   std::string command(args[1]);
   if (command == "supervised") {
@@ -175,9 +185,16 @@ void Args::parseArgs(const std::vector<std::string>& args) {
         minn = std::stoi(args.at(ai + 1));
       } else if (args[ai] == "-maxn") {
         maxn = std::stoi(args.at(ai + 1));
-      } else if (args[ai] == "-hashOnly") {
-	hashOnly = true;
-	ai--;
+      } else if (args[ai] == "-mode") {
+        if (std::string(args.at(ai + 1)) == "fasttext") {
+          mode = mode_name::fasttext;
+        } else if (std::string(args.at(ai + 1)) == "floret"){
+          mode = mode_name::floret;
+        } else {
+          std::cerr << "Unknown mode: " << args.at(ai + 1) << std::endl;
+          printHelp();
+          exit(EXIT_FAILURE);
+        }
       } else if (args[ai] == "-hashCount") {
 	hashCount = std::stoi(args.at(ai + 1));
         if (hashCount < 1 || hashCount >= 5) {
@@ -241,10 +258,10 @@ void Args::parseArgs(const std::vector<std::string>& args) {
     printHelp();
     exit(EXIT_FAILURE);
   }
-  if (wordNgrams <= 1 && maxn == 0 && !hasAutotune() && !hashOnly) {
+  if (wordNgrams <= 1 && maxn == 0 && !hasAutotune() && mode != mode_name::floret) {
     bucket = 0;
   }
-  if (!hashOnly) {
+  if (mode != mode_name::floret) {
     hashCount = 1;
   }
 }
@@ -278,9 +295,9 @@ void Args::printDictionaryHelp() {
             << "]\n"
             << "  -maxn               max length of char ngram [" << maxn
             << "]\n"
-            << "  -hashOnly           both word and char ngrams hashed only in buckets ["
-	    << boolToString(hashOnly) << "]\n"
-            << "  -hashCount          with hashOnly: number of hashes (1-4) per word / subword ["
+            << "  -mode               fasttext (default) or floret (word and char ngrams hashed in buckets) ["
+	    << "fasttext" << "]\n"
+            << "  -hashCount          floret mode only: number of hashes (1-4) per word/subword ["
 	    << hashCount << "]\n"
             << "  -t                  sampling threshold [" << t << "]\n"
             << "  -label              labels prefix [" << label << "]\n";
@@ -353,7 +370,7 @@ void Args::save(std::ostream& out) {
   out.write((char*)&(bucket), sizeof(int));
   out.write((char*)&(minn), sizeof(int));
   out.write((char*)&(maxn), sizeof(int));
-  out.write((char*)&(hashOnly), sizeof(bool));
+  out.write((char*)&(mode), sizeof(mode_name));
   out.write((char*)&(hashCount), sizeof(int));
   out.write((char*)&(lrUpdateRate), sizeof(int));
   out.write((char*)&(t), sizeof(double));
@@ -371,7 +388,7 @@ void Args::load(std::istream& in) {
   in.read((char*)&(bucket), sizeof(int));
   in.read((char*)&(minn), sizeof(int));
   in.read((char*)&(maxn), sizeof(int));
-  in.read((char*)&(hashOnly), sizeof(bool));
+  in.read((char*)&(mode), sizeof(mode_name));
   in.read((char*)&(hashCount), sizeof(int));
   in.read((char*)&(lrUpdateRate), sizeof(int));
   in.read((char*)&(t), sizeof(double));
@@ -400,8 +417,8 @@ void Args::dump(std::ostream& out) const {
       << " " << minn << std::endl;
   out << "maxn"
       << " " << maxn << std::endl;
-  out << "hashOnly"
-      << " " << hashOnly << std::endl;
+  out << "mode"
+      << " " << modeToString(mode) << std::endl;
   out << "hashCount"
       << " " << hashCount << std::endl;
   out << "lrUpdateRate"

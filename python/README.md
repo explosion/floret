@@ -19,8 +19,8 @@ pip install floret
 
 Train floret vectors using the options:
 
-- `hashOnly`: if `True`, train floret vectors, storing both words and subwords
-  in the same compact hash table
+- `mode`: `"floret"`, storing both words and subwords in the same compact hash
+  table
 - `hashCount`: store each entry in 1-4 rows in the hash table (recommended:
   `2`)
 - `bucket`: in combination with `hashCount>1`, the size of the hash table can
@@ -36,7 +36,7 @@ import floret
 model = floret.train_unsupervised(
     "data.txt",
     model="cbow",
-    hashOnly=True,
+    mode="floret",
     hashCount=2,
     bucket=50000,
     minn=3,
@@ -56,7 +56,7 @@ model.save_vectors("vectors.vec")
 model.save_hash_only_vectors("vectors.floret")
 ```
 
-**Note:** with the default setting `hashOnly=False`, `floret` trains original
+**Note:** with the default setting `mode="fasttext"`, `floret` trains original
 fastText vectors.
 
 ## Use floret vectors in spaCy

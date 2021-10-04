@@ -26,12 +26,14 @@ enum class metric_name : int {
   recallAtPrecision,
   recallAtPrecisionLabel
 };
+enum class mode_name : int { fasttext = 1, floret };
 
 class Args {
  protected:
   std::string boolToString(bool) const;
   std::string modelToString(model_name) const;
   std::string metricToString(metric_name) const;
+  std::string modeToString(mode_name) const;
   std::unordered_set<std::string> manualArgs_;
 
  public:
@@ -52,7 +54,7 @@ class Args {
   int bucket;
   int minn;
   int maxn;
-  bool hashOnly;
+  mode_name mode;
   int hashCount;
   int thread;
   double t;
