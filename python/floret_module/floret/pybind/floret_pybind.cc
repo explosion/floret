@@ -86,7 +86,7 @@ std::pair<std::vector<py::str>, std::vector<py::str>> getLineText(
 }
 
 PYBIND11_MODULE(floret_pybind, m) {
-  py::class_<fasttext::Args>(m, "args")
+  py::class_<fasttext::Args>(m, "args", py::module_local())
       .def(py::init<>())
       .def_readwrite("input", &fasttext::Args::input)
       .def_readwrite("output", &fasttext::Args::output)
@@ -131,20 +131,18 @@ PYBIND11_MODULE(floret_pybind, m) {
         m.setManual(argName);
       });
 
-  py::enum_<fasttext::model_name>(m, "model_name")
+  py::enum_<fasttext::model_name>(m, "model_name", py::module_local())
       .value("cbow", fasttext::model_name::cbow)
       .value("skipgram", fasttext::model_name::sg)
-      .value("supervised", fasttext::model_name::sup)
-      .export_values();
+      .value("supervised", fasttext::model_name::sup);
 
-  py::enum_<fasttext::loss_name>(m, "loss_name")
+  py::enum_<fasttext::loss_name>(m, "loss_name", py::module_local())
       .value("hs", fasttext::loss_name::hs)
       .value("ns", fasttext::loss_name::ns)
       .value("softmax", fasttext::loss_name::softmax)
-      .value("ova", fasttext::loss_name::ova)
-      .export_values();
+      .value("ova", fasttext::loss_name::ova);
 
-  py::enum_<fasttext::metric_name>(m, "metric_name")
+  py::enum_<fasttext::metric_name>(m, "metric_name", py::module_local())
       .value("f1score", fasttext::metric_name::f1score)
       .value("f1scoreLabel", fasttext::metric_name::f1scoreLabel)
       .value("precisionAtRecall", fasttext::metric_name::precisionAtRecall)
@@ -154,10 +152,9 @@ PYBIND11_MODULE(floret_pybind, m) {
       .value("recallAtPrecision", fasttext::metric_name::recallAtPrecision)
       .value(
           "recallAtPrecisionLabel",
-          fasttext::metric_name::recallAtPrecisionLabel)
-      .export_values();
+          fasttext::metric_name::recallAtPrecisionLabel);
 
-  py::enum_<fasttext::mode_name>(m, "mode_name")
+  py::enum_<fasttext::mode_name>(m, "mode_name", py::module_local())
       .value("fasttext", fasttext::mode_name::fasttext)
       .value("floret", fasttext::mode_name::floret);
       // not exported into the parent scope because the names clash
@@ -175,7 +172,7 @@ PYBIND11_MODULE(floret_pybind, m) {
       },
       py::call_guard<py::gil_scoped_release>());
 
-  py::class_<fasttext::Vector>(m, "Vector", py::buffer_protocol())
+  py::class_<fasttext::Vector>(m, "Vector", py::buffer_protocol(), py::module_local())
       .def(py::init<ssize_t>())
       .def_buffer([](fasttext::Vector& m) -> py::buffer_info {
         return py::buffer_info(
@@ -202,7 +199,7 @@ PYBIND11_MODULE(floret_pybind, m) {
              sizeof(fasttext::real) * (int64_t)1});
       });
 
-  py::class_<fasttext::Meter>(m, "Meter")
+  py::class_<fasttext::Meter>(m, "Meter", py::module_local())
       .def(py::init<bool>())
       .def("scoreVsTrue", &fasttext::Meter::scoreVsTrue)
       .def(
@@ -231,7 +228,7 @@ PYBIND11_MODULE(floret_pybind, m) {
           (double (fasttext::Meter::*)(double) const) &
               fasttext::Meter::recallAtPrecision);
 
-  py::class_<fasttext::FastText>(m, "fasttext")
+  py::class_<fasttext::FastText>(m, "fasttext", py::module_local())
       .def(py::init<>())
       .def("getArgs", &fasttext::FastText::getArgs)
       .def(
