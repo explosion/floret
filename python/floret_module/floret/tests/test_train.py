@@ -27,7 +27,7 @@ def test_train_unsupervised_fasttext(mode, value):
     # compare floret fasttext mode to original fasttext module
     if mode == "fasttext":
         fasttext_model = fasttext.train_unsupervised(
-            "test_data/data.txt",
+            str(data_path),
             model="cbow",
             bucket=100,
             minn=3,

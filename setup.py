@@ -186,5 +186,6 @@ setup(
         str('floret.tests'),
     ],
     package_dir={str(''): str('python/floret_module')},
+    package_data={"": ["*.txt", "*.md"]},
     zip_safe=False,
 )
