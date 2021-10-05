@@ -39,23 +39,23 @@ jobs:
 
   - script: |
       python -m pip install --upgrade pip setuptools
-      pip install -r requirements.txt
+      python -m pip install -r requirements.txt
     displayName: 'Install dependencies'
 
   - script: python setup.py sdist
     displayName: 'Build sdist'
 
   - script: |
-      pip freeze > installed.txt
-      pip uninstall -y -r installed.txt
+      python -m pip freeze > installed.txt
+      python -m pip uninstall -y -r installed.txt
     displayName: "Uninstall all packages"
 
-  - script: |
+  - bash: |
       SDIST=$(python -c "import os;print(os.listdir('./dist')[-1])" 2>&1)
-      pip install dist/$SDIST
+      python -m pip install dist/$SDIST
     displayName: 'Install from sdist'
 
   - script: |
-      pip install -r requirements.txt
+      python -m pip install -r requirements.txt
       python -m pytest --pyargs floret
     displayName: 'Run tests'
