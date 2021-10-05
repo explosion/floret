@@ -9,7 +9,7 @@ from numpy.testing import assert_almost_equal
     "mode,value", [("fasttext", 0.0033344), ("floret", -0.00057555)]
 )
 def test_train_unsupervised_fasttext(mode, value):
-    data_path = Path(__file__).parent / "test_data" / "data.txt"
+    data_path = Path(__file__).parent / "data.txt"
     model = floret.train_unsupervised(
         str(data_path),
         model="cbow",
