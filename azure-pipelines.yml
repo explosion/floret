@@ -50,6 +50,9 @@ jobs:
       pip uninstall -y -r installed.txt
     displayName: "Uninstall all packages"
 
+  - script: ls dist
+    displayName: "List dist"
+
   - script: pip install dist/*.tar.gz
     displayName: 'Install from sdist'
 
