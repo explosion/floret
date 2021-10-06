@@ -468,7 +468,7 @@ unsupervised_default = {
     'minCountLabel': 0,
     'minn': 3,
     'maxn': 6,
-    'mode': "fasttext_mode",
+    'mode': "fasttext",
     'hashCount': 1,
     'neg': 5,
     'wordNgrams': 1,
