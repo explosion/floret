@@ -60,3 +60,7 @@ jobs:
       python -m pip install -r requirements.txt
       python -m pytest --pyargs floret
     displayName: 'Run tests'
+
+  - script: |
+      python tests/runtests.py -u
+    displayName: 'Run upstream unit tests'
