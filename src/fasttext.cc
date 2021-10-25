@@ -159,7 +159,7 @@ void FastText::saveVectors(const std::string& filename) {
   ofs.close();
 }
 
-void FastText::saveHashOnlyVectors(const std::string& filename) {
+void FastText::saveFloretVectors(const std::string& filename) {
   if (!input_ || !output_) {
     throw std::runtime_error("Model never trained");
   }

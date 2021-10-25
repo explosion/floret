@@ -307,9 +307,9 @@ class _floret(object):
         """Save the vectors to the given path"""
         self.f.saveVectors(path)
 
-    def save_hash_only_vectors(self, path):
-        """Save the hash-only vectors to the given path"""
-        self.f.saveHashOnlyVectors(path)
+    def save_floret_vectors(self, path):
+        """Save the floret vectors to the given path"""
+        self.f.saveFloretVectors(path)
 
     def test(self, path, k=1, threshold=0.0):
         """Evaluate supervised model using file given by path"""

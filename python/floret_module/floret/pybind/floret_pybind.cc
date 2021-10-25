@@ -275,8 +275,8 @@ PYBIND11_MODULE(floret_pybind, m) {
           "saveVectors",
           [](fasttext::FastText& m, std::string s) { m.saveVectors(s); })
       .def(
-          "saveHashOnlyVectors",
-          [](fasttext::FastText& m, std::string s) { m.saveHashOnlyVectors(s); })
+          "saveFloretVectors",
+          [](fasttext::FastText& m, std::string s) { m.saveFloretVectors(s); })
       .def(
           "test",
           [](fasttext::FastText& m,

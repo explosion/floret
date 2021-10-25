@@ -53,7 +53,7 @@ model.save_model("vectors.bin")
 model.save_vectors("vectors.vec")
 
 # export floret vector table
-model.save_hash_only_vectors("vectors.floret")
+model.save_floret_vectors("vectors.floret")
 ```
 
 **Note:** with the default setting `mode="fasttext"`, `floret` trains original
