@@ -178,7 +178,7 @@ setup(
         'Operating System :: Unix',
         'Operating System :: MacOS',
     ],
-    install_requires=['numpy', 'scipy'],
+    install_requires=['numpy'],
     cmdclass={'build_ext': BuildExt},
     packages=[
         str('floret'),
