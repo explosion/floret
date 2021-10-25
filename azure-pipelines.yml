@@ -61,6 +61,7 @@ jobs:
   - script: |
       python -m pip install wheel
       python -m pip install -r requirements.txt
+      python -m pip install fasttext
       python -m pytest --pyargs floret
     displayName: 'Run tests'
 
