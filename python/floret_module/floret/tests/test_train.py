@@ -28,6 +28,13 @@ def test_train_unsupervised_fasttext(mode, value):
     if sys.platform.startswith("linux"):
         assert_almost_equal(the_zero, value)
 
+    model.save_model(f"test_model_{mode}.bin")
+    model.save_vectors(f"test_model_{mode}.vectors")
+    model.save_floret_vectors(f"test_model_{mode}.floret")
+
+    model2 = floret.load_model(f"test_model_{mode}.bin")
+    assert model.get_word_vector("the")[0] == model2.get_word_vector("the")[0]
+
 
 @pytest.mark.parametrize(
     "mode,value", [("fasttext", 0.0033344)]
