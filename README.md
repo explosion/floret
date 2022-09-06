@@ -9,9 +9,7 @@ combines:
 - fastText's subwords to provide embeddings for any word
 - Bloom embeddings ("hashing trick") for a compact vector table
 
-To learn more about floret, check out our [blog post on floret vectors](https://explosion.ai/blog/floret-vectors).
-
-For a hands-on introduction, experiment with English vectors in this example
+To learn more about floret, check out our [blog post on floret vectors](https://explosion.ai/blog/floret-vectors). For a hands-on introduction, experiment with English vectors in this example
 notebook: [`intro_to_floret`][intro_to_floret] [![Open in
 Colab][colab]][intro_to_floret_colab]
 
