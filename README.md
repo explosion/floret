@@ -15,7 +15,7 @@ Colab][colab]][intro_to_floret_colab]
 
 [colab]: https://gistcdn.githack.com/ines/dcf354aa71a7665ae19871d7fd14a4e0/raw/461fc1f61a7bc5860f943cd4b6bcfabb8c8906e7/colab-badge.svg
 [intro_to_floret]: examples/01_intro_to_floret.ipynb
-[intro_to_floret_colab]: https://colab.research.google.com/github/explosion/floret/blob/master/examples/01_intro_to_floret.ipynb
+[intro_to_floret_colab]: https://colab.research.google.com/github/explosion/floret/blob/main/examples/01_intro_to_floret.ipynb
 
 ## Install floret
 
