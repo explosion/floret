@@ -9,6 +9,14 @@ combines:
 - fastText's subwords to provide embeddings for any word
 - Bloom embeddings ("hashing trick") for a compact vector table
 
+For an introduction to floret, check out our [blog post on floret
+vectors](https://explosion.ai/blog/floret-vectors) or try out English vectors in this example notebook: [`intro_to_floret`][intro_to_floret] [![Open in
+Colab][colab]][intro_to_floret_colab]
+
+[colab]: https://gistcdn.githack.com/ines/dcf354aa71a7665ae19871d7fd14a4e0/raw/461fc1f61a7bc5860f943cd4b6bcfabb8c8906e7/colab-badge.svg
+[intro_to_floret]: examples/01_intro_to_floret.ipynb
+[intro_to_floret_colab]: https://colab.research.google.com/github/explosion/floret/blob/master/examples/01_intro_to_floret.ipynb
+
 ## Install floret
 
 ### Build floret from source
@@ -91,7 +99,7 @@ subwords. However, for 1M words + 2M subwords with 300-dimensional vectors of
 32-bit floats, you'd need around 3GB to store the resulting data, which is
 prohibitive for many use cases.
 
-In addition, many libraries that import vectors only support the word table 
+In addition, many libraries that import vectors only support the word table
 (`.vec`), which limits the coverage to words above a certain frequency in the
 training data. For languages with rich morphology, even a large vector table
 may not provide good coverage for words seen during training and you are still
