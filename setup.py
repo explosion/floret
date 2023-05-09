@@ -22,7 +22,7 @@ import platform
 import io
 import pybind11
 
-__version__ = '0.10.2'
+__version__ = '0.10.3'
 FASTTEXT_SRC = "src"
 
 # Based on https://github.com/pybind/python_example
