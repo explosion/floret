@@ -544,7 +544,8 @@ def train_supervised(*kargs, **kwargs):
                  'minCountLabel', 'minn', 'maxn', 'neg', 'wordNgrams', 'loss', 'bucket',
                  'thread', 'lrUpdateRate', 't', 'label', 'verbose', 'pretrainedVectors',
                  'seed', 'autotuneValidationFile', 'autotuneMetric',
-                 'autotunePredictions', 'autotuneDuration', 'autotuneModelSize']
+                 'autotunePredictions', 'autotuneDuration', 'autotuneModelSize',
+                 'hashCount', 'mode']
     args, manually_set_args = read_args(kargs, kwargs, arg_names,
                                         supervised_default)
     a = _build_args(args, manually_set_args)
