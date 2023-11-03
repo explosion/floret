@@ -22,7 +22,7 @@ import platform
 import io
 import pybind11
 
-__version__ = '0.10.4'
+__version__ = '0.10.5'
 FASTTEXT_SRC = "src"
 
 # Based on https://github.com/pybind/python_example
@@ -173,6 +173,7 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Topic :: Software Development',
         'Topic :: Scientific/Engineering',
         'Operating System :: Microsoft :: Windows',
