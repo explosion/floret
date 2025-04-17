@@ -329,13 +329,14 @@ void FastText::printInfo(real progress, real loss, std::ostream& log_stream) {
   int64_t eta;
   std::tie<double, double, int64_t>(wst, lr, eta) = progressInfo(progress);
 
+  // Format output with timestamp for more structured logging
   log_stream << std::fixed;
-  log_stream << "Progress: ";
-  log_stream << std::setprecision(1) << std::setw(5) << (progress * 100) << "%";
-  log_stream << " words/sec/thread: " << std::setw(7) << int64_t(wst);
-  log_stream << " lr: " << std::setw(9) << std::setprecision(6) << lr;
-  log_stream << " avg.loss: " << std::setw(9) << std::setprecision(6) << loss;
-  log_stream << " ETA: " << utils::ClockPrint(eta);
+  log_stream << "[FLORET] ";
+  log_stream << std::setprecision(1) << (progress * 100) << "% complete | ";
+  log_stream << int64_t(wst) << " words/sec/thread | ";
+  log_stream << "lr: " << std::setprecision(6) << lr << " | ";
+  log_stream << "loss: " << std::setprecision(6) << loss << " | ";
+  log_stream << "ETA: " << utils::ClockPrint(eta);
   log_stream << std::flush;
 }
 
@@ -786,6 +787,12 @@ void FastText::train(const Args& args, const TrainCallback& callback) {
     // manage expectations
     throw std::invalid_argument("Cannot use stdin for training!");
   }
+  
+  // Log beginning of training process
+  std::cerr << "[FLORET] Starting training in " 
+            << (args_->mode == mode_name::floret ? "floret" : "fasttext") 
+            << " mode" << std::endl;
+  
   std::ifstream ifs(args_->input);
   if (!ifs.is_open()) {
     throw std::invalid_argument(
@@ -793,8 +800,12 @@ void FastText::train(const Args& args, const TrainCallback& callback) {
   }
   dict_->readFromFile(ifs);
   ifs.close();
+  
+  std::cerr << "[FLORET] Read " << dict_->ntokens() << " tokens, "
+            << dict_->nwords() << " unique words" << std::endl;
 
   if (!args_->pretrainedVectors.empty()) {
+    std::cerr << "[FLORET] Loading pretrained vectors" << std::endl;
     input_ = getInputMatrixFromFile(args_->pretrainedVectors);
   } else {
     input_ = createRandomMatrix();
@@ -803,6 +814,19 @@ void FastText::train(const Args& args, const TrainCallback& callback) {
   quant_ = false;
   auto loss = createLoss(output_);
   bool normalizeGradient = (args_->model == model_name::sup);
+  
+  // Log training configuration
+  std::cerr << "[FLORET] Config: dim=" << args_->dim 
+            << ", mode=" << (args_->mode == mode_name::floret ? "floret" : "fasttext")
+            << ", minCount=" << args_->minCount
+            << ", epoch=" << args_->epoch
+            << ", lr=" << args_->lr;
+  
+  if (args_->mode == mode_name::floret) {
+    std::cerr << ", hashCount=" << args_->hashCount;
+  }
+  std::cerr << std::endl;
+  
   model_ = std::make_shared<Model>(input_, output_, loss, normalizeGradient);
   startThreads(callback);
 }
@@ -831,12 +855,22 @@ void FastText::startThreads(const TrainCallback& callback) {
   }
   const int64_t ntokens = dict_->ntokens();
   // Same condition as trainThread
+  // Use a rate limiter for logs to avoid overwhelming output
+  real lastLoggedProgress = 0.0;
+  real logInterval = 0.01; // Log at most every 1% progress (adjustable)
+  
   while (keepTraining(ntokens)) {
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     if (loss_ >= 0 && args_->verbose > 1) {
       real progress = real(tokenCount_) / (args_->epoch * ntokens);
-      std::cerr << "\r";
-      printInfo(progress, loss_, std::cerr);
+      
+      // Only log if we've made sufficient progress since last log
+      if (progress - lastLoggedProgress >= logInterval) {
+        lastLoggedProgress = progress;
+        // Don't use carriage return in log-friendly mode
+        printInfo(progress, loss_, std::cerr);
+        std::cerr << std::endl;
+      }
     }
   }
   for (int32_t i = 0; i < threads.size(); i++) {
@@ -848,9 +882,10 @@ void FastText::startThreads(const TrainCallback& callback) {
     std::rethrow_exception(exception);
   }
   if (args_->verbose > 0) {
-    std::cerr << "\r";
+    // Log final stats without carriage return for better log output
     printInfo(1.0, loss_, std::cerr);
     std::cerr << std::endl;
+    std::cerr << "[FLORET] Training complete - " << dict_->nwords() << " words in vocabulary" << std::endl;
   }
 }
 

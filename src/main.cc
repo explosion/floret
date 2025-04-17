@@ -361,6 +361,9 @@ void train(const std::vector<std::string> args) {
   std::shared_ptr<FastText> fasttext = std::make_shared<FastText>();
   std::string outputFileName;
 
+  // Log initialization details
+  std::cerr << "[FLORET-CLI] Starting training task" << std::endl;
+
   if (a.hasAutotune() &&
       a.getAutotuneModelSize() != Args::kUnlimitedModelSize) {
     outputFileName = a.output + ".ftz";
@@ -373,20 +376,36 @@ void train(const std::vector<std::string> args) {
         outputFileName + " cannot be opened for saving.");
   }
   ofs.close();
+  
+  // Train the model
+  std::cerr << "[FLORET-CLI] Training model with input: " << a.input << std::endl;
+  std::cerr << "[FLORET-CLI] Output will be saved to: " << outputFileName << std::endl;
+  
   if (a.hasAutotune()) {
     Autotune autotune(fasttext);
     autotune.train(a);
   } else {
     fasttext->train(a);
   }
+  
+  // Save model outputs
+  std::cerr << "[FLORET-CLI] Saving model to: " << outputFileName << std::endl;
   fasttext->saveModel(outputFileName);
+  
+  std::cerr << "[FLORET-CLI] Saving word vectors to: " << a.output + ".vec" << std::endl;
   fasttext->saveVectors(a.output + ".vec");
+  
   if (a.mode == mode_name::floret) {
+    std::cerr << "[FLORET-CLI] Saving floret vectors to: " << a.output + ".floret" << std::endl;
     fasttext->saveFloretVectors(a.output + ".floret");
   }
+  
   if (a.saveOutput) {
+    std::cerr << "[FLORET-CLI] Saving output vectors to: " << a.output + ".output" << std::endl;
     fasttext->saveOutput(a.output + ".output");
   }
+  
+  std::cerr << "[FLORET-CLI] Training complete!" << std::endl;
 }
 
 void dump(const std::vector<std::string>& args) {
