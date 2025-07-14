@@ -17,12 +17,11 @@ from setuptools.command.build_ext import build_ext
 import sys
 import setuptools
 import os
-import subprocess
 import platform
 import io
 import pybind11
 
-__version__ = '0.10.5'
+__version__ = '0.10.6'
 FASTTEXT_SRC = "src"
 
 # Based on https://github.com/pybind/python_example
@@ -174,6 +173,7 @@ setup(
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
         'Topic :: Software Development',
         'Topic :: Scientific/Engineering',
         'Operating System :: Microsoft :: Windows',
