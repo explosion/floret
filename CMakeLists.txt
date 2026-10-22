@@ -52,6 +52,29 @@ set(SOURCE_FILES
     src/vector.cc)
 
 
+# std::atomic<int64_t> needs libatomic on 32-bit targets without 64-bit
+# atomic instructions, e.g. riscv32. The variable is global so the compiler
+# cannot optimize the atomic operations away.
+include(CheckCXXSourceCompiles)
+set(ATOMIC64_TEST "
+#include <atomic>
+#include <cstdint>
+std::atomic<int64_t> v;
+int main() {
+  v.fetch_add(1);
+  return static_cast<int>(v.load());
+}")
+check_cxx_source_compiles("${ATOMIC64_TEST}" HAVE_ATOMIC64)
+if (NOT HAVE_ATOMIC64)
+  set(CMAKE_REQUIRED_LIBRARIES atomic)
+  check_cxx_source_compiles("${ATOMIC64_TEST}" HAVE_ATOMIC64_WITH_LIBATOMIC)
+  unset(CMAKE_REQUIRED_LIBRARIES)
+  if (HAVE_ATOMIC64_WITH_LIBATOMIC)
+    set(ATOMIC_LIBRARY atomic)
+    set(PC_LIBS_PRIVATE "-latomic")
+  endif()
+endif()
+
 if (NOT MSVC)
   include(GNUInstallDirs)
   configure_file("floret.pc.in" "floret.pc" @ONLY)
@@ -66,6 +89,10 @@ set_target_properties(floret-shared PROPERTIES OUTPUT_NAME floret
 set_target_properties(floret-static PROPERTIES OUTPUT_NAME floret)
 set_target_properties(floret-static_pic PROPERTIES OUTPUT_NAME floret_pic
   POSITION_INDEPENDENT_CODE True)
+target_link_libraries(floret-shared ${ATOMIC_LIBRARY})
+target_link_libraries(floret-static ${ATOMIC_LIBRARY})
+target_link_libraries(floret-static_pic ${ATOMIC_LIBRARY})
+
 add_executable(floret-bin src/main.cc)
 target_link_libraries(floret-bin pthread floret-static)
 set_target_properties(floret-bin PROPERTIES PUBLIC_HEADER "${HEADER_FILES}" OUTPUT_NAME floret)

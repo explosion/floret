@@ -7,4 +7,5 @@ Name: @PROJECT_NAME@
 Description: Efficient learning of word representations and sentence classification
 Version: @PROJECT_VERSION@
 Libs: -L${libdir} -lfloret
+Libs.private: @PC_LIBS_PRIVATE@
 Cflags: -I${includedir}
